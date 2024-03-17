@@ -8,6 +8,6 @@ names: ['ClosedDoor', 'OpenDoor']
 roboflow:
   workspace: tfg-d2a1p
   project: tfg-tacem
-  version: 2
+  version: 3
   license: MIT
-  url: https://universe.roboflow.com/tfg-d2a1p/tfg-tacem/dataset/2
+  url: https://universe.roboflow.com/tfg-d2a1p/tfg-tacem/dataset/3

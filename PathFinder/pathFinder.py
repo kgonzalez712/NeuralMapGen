@@ -7,10 +7,10 @@ import cv2
 # Folder Paths
 testImageFolder = "path/to/your/images/folder"  # Folder containing images
 imageFolder = "path/to/your/images/folder"  # Folder containing images
-weightsPath = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/best.pt"  # Path to your YOLOv8 weights file
+weightsPath = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/bestTS4.pt"  # Path to your YOLOv8 weights file
 outputFolder = "path/to/output/folder"  # Folder to save output images
 outputTestFolder = "path/to/output/folder"  # Optional: Folder to save output images
-img='/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/test3.jpg'
+img='/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/test1.jpg'
 
 def detectPathsOnImage(imgPath):
     """Detects paths on an image and displays it with bounding boxes in a resized window."""

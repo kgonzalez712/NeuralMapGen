@@ -45,7 +45,10 @@ def calculateCenter(coordinates):
 
 def detectPathsOnImagesInFolder():
     """Detects paths on images within a folder and saves modified images with bounding boxes."""
+    resultList = list(())
     model = YOLO(weightsPath)  # Load the model once for efficiency
+    pathId = 0
+    imageId = 0
 
     for filename in os.listdir(imagesFolder):
         if filename.endswith(".jpg") or filename.endswith(".png"):  # Check for image extensions
@@ -56,23 +59,30 @@ def detectPathsOnImagesInFolder():
             img = cv2.imread(full_path)
 
             for box in result.boxes:
-                class_id = getClassType(result.names[box.cls[0].item()])
+                classId = getClassType(result.names[box.cls[0].item()])
                 cords = box.xyxy[0].tolist()
                 cords = [round(x) for x in cords]
                 conf = decimalToPercent(float(round(box.conf[0].item(), 2)))
-                print("Object type:", class_id)
-                print("Coordinates:", cords)
-                print("Center:", calculateCenter(cords))
+                print("Object type:", classId)
+                print("Coordinates:", calculateCenter(cords))
                 print("Probability:", conf)
+                print("Path Id:", pathId)
+                print("image Id:", imageId)
+                resultList.append(list((imageId,pathId,classId,calculateCenter(cords))))
+                pathId+=1
                 x1, y1, x2, y2 = [int(x) for x in box.xyxy[0].tolist()]
                 label = f"{result.names[box.cls[0].item()]}: {round(box.conf[0].item(), 2)}"
                 cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
                 cv2.putText(img, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
                 print("---")
 
-            # Save modified image (replace with your desired output path)
+            # Save modified image
             output_path = f"{outputFolder}/modified_{os.path.basename(full_path)}"
             cv2.imwrite(output_path, img)
+            imageId+=1
             print(f"Image saved to: {output_path}")
 
-detectPathsOnImagesInFolder()
+    return resultList
+
+
+

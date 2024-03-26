@@ -1,8 +1,12 @@
-from ultralytics import YOLO, utils, models
-
-import torch
-import cv2
 import os
+from ultralytics import YOLO, utils, models
+import cv2
+import torch
+
+#Folder Paths
+weightsPath = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/bestTS4.pt"
+imagesFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/testImages"
+outputFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/outputTest"
 
 #Class Types
 classType = {
@@ -11,85 +15,100 @@ classType = {
   '2': "Open Path"
 }
 
-# Folder Paths
-testImageFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/testImages/"  # Folder containing images
-imageFolder = "path/to/your/images/folder"  # Folder containing images
-weightsPath = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/bestTS4.pt"  # Path to your YOLOv8 weights file
-outputFolder = "path/to/output/folder"  # Folder to save output images
-outputTestFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/outputTest"  # Optional: Folder to save output images
-img='/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/testImages/test2.jpg'
+class PathFinder:
+    def __init__(self, weight, imagesPath, outputPath):
+        """
+        Initializes the PathDetector object.
 
-def getClassType(number):
-  #Returns the string associated with the number, or None if not found.
-  return classType.get(number)
+        Args:
+            weights_path (str): Path to the YOLO model weights file.
+            images_folder (str): Path to the folder containing images.
+            output_folder (str): Path to the folder for saving modified images.
+            class_types (dict): Dictionary mapping class IDs to human-readable names.
+        """
+        self.weightsPath = weight
+        self.imagesFolder = imagesFolder
+        self.outputFolder = outputFolder
+        self.model = YOLO(self.weightsPath)  # Load the model once for efficiency
 
-def decimal_to_percent(decimal):
-  #Converts a decimal number to a percentage string.
-  return str(decimal * 100) + "%"
-
-def calculate_center(coordinates):
-  """
-  Calculates the center point of a rectangle given its corner coordinates.
-
-  Args:
-      coordinates: A list or array containing the x1, y1, x2, y2 coordinates
-                   of the rectangle in the order [x1, y1, x2, y2].
-
-  Returns:
-      A list containing the center coordinates (x_center, y_center).
-  """
-
-  if len(coordinates) != 4:
-    raise ValueError("Invalid number of coordinates. Expected 4 (x1, y1, x2, y2).")
-
-  x1, y1, x2, y2 = coordinates
-  x_center = (x1 + x2) / 2
-  y_center = (y1 + y2) / 2
-  return [round(x_center), round(y_center)]
-
-def detectPathsOnImage(imgPath):
-    #Detects paths on an image and displays it with bounding boxes.
-    model = YOLO(weightsPath)
-    results = model.predict(imgPath)
+    def getClassType(self,number):
+      #Returns the string associated with the number, or None if not found.
+      return classType.get(number)
     
-    result = results[0]
-    box = result.boxes[0]
-    img = cv2.imread(imgPath)
+    def decimalToPercent(self,decimal):
+      #Converts a decimal number to a percentage string.
+      return str(decimal * 100) + "%"
+    
+    def calculateCenter(self,coordinates):
+      """
+      Calculates the center point of a rectangle given its corner coordinates.
 
-    # Set desired window size (replace with your preferred width and height)
-    window_width = 800
-    window_height = 600
-    cv2.namedWindow("Image with Paths", cv2.WINDOW_NORMAL)  # Enable window resizing
-    cv2.resizeWindow("Image with Paths", window_width, window_height)
+      Args:
+          coordinates: A list or array containing the x1, y1, x2, y2 coordinates
+                      of the rectangle in the order [x1, y1, x2, y2].
 
-    for box in result.boxes:
-        class_id = getClassType(result.names[box.cls[0].item()])
-        cords = box.xyxy[0].tolist()
-        cords = [round(x) for x in cords]
-        conf = decimal_to_percent(float(round(box.conf[0].item(), 2)))
-        print("Object type:", class_id)
-        print("Coordinates:", cords)
-        print("Center:", calculate_center(cords))
-        print("Probability:", conf)
-        x1, y1, x2, y2 = [int(x) for x in box.xyxy[0].tolist()]  # Convert to integers for cv2
-        label = f"{result.names[box.cls[0].item()]}: {round(box.conf[0].item(), 2)}"
-        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)  # Green bounding box
-        cv2.putText(img, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)  # Label above box
-        print("---")
+      Returns:
+          A list containing the center coordinates (x_center, y_center).
+      """
+
+      if len(coordinates) != 4:
+        raise ValueError("Invalid number of coordinates. Expected 4 (x1, y1, x2, y2).")
+
+      x1, y1, x2, y2 = coordinates
+      x_center = (x1 + x2) / 2
+      y_center = (y1 + y2) / 2
+      return [round(x_center), round(y_center)]
+    
+    def detectPathsInFolder(self):
+      #Detects paths on images within a folder and saves modified images with bounding boxes.
+      imageList = []
+      imageId = 0
+      for filename in os.listdir(self.imagesFolder):
+          pathList = []
+          if filename.endswith(".jpg") or filename.endswith(".png"):  # Check for image extensions
+              full_path = os.path.join(self.imagesFolder, filename)
+              results = self.model.predict(full_path)  # Predict on each image
+              result = results[0]
+              img = cv2.imread(full_path)
+              for box in result.boxes:
+                  classId = self.getClassType(result.names[box.cls[0].item()])
+                  cords = box.xyxy[0].tolist()
+                  cords = [round(x) for x in cords]
+                  conf = self.decimalToPercent(float(round(box.conf[0].item(), 2)))
+                  pathList.append(list((classId,self.calculateCenter(cords),conf)))
+                  x1, y1, x2, y2 = [int(x) for x in box.xyxy[0].tolist()]
+                  label = f"{result.names[box.cls[0].item()]}: {round(box.conf[0].item(), 2)}"
+                  cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                  cv2.putText(img, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+              print(" ---- PATH LIST -----")
+              print(pathList)
+              print(sorted(pathList,key=lambda x: x[1][0]))
+              imageList.append([imageId,sorted(pathList,key=lambda x: x[1][0])])
+              # Save modified image
+              output = f"{self.outputFolder}/modified_{os.path.basename(full_path)}"
+              cv2.imwrite(output, img)
+              imageId+=1
+
+              print(f"\n Image saved to: {output}")
+      return imageList
 
 
-    # Save modified image
-    outputPath = f"{outputTestFolder}/modified_{os.path.basename(imgPath)}"
-    cv2.imwrite(outputPath, img)
-    print(f"Image saved to: {outputPath}")
+a = PathFinder(weightsPath, imagesFolder, outputFolder)
+list = a.detectPathsInFolder()
+print(" ------------- ")
+print("Final output below \n")
+print("Results list: \n")
+print(list)
+print("\nImages list: \n")
+print(list[0]) # lista de imagenes
+print("\nImage id: \n")
+print(list[0][0]) # id de imagen
+print("\nPaths on image: \n")
+print(list[0][1]) # paths en la  imagen
+print("\nPath detail: \n")
+print(list[0][1][0]) # camino
+print("\nPaths center: \n")
+print(list[0][1][0][1]) # coordenadas del camino
 
-# Process all images in the folder (optional)
-for filename in os.listdir(testImageFolder):
-    if filename.endswith(".jpg") or filename.endswith(".png"):  # Check for image extensions
-        full_path = os.path.join(testImageFolder, filename)
-        detectPathsOnImage(full_path)
 
-# Or process a specific image (replace with your image path)
-# detectPathsOnImage("/path/to/your/specific/image.jpg")
-
-detectPathsOnImage(img)
+print(" ------------- ")

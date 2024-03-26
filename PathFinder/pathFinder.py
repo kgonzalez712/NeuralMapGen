@@ -92,23 +92,21 @@ class PathFinder:
               print(f"\n Image saved to: {output}")
       return imageList
 
-
-a = PathFinder(weightsPath, imagesFolder, outputFolder)
-list = a.detectPathsInFolder()
-print(" ------------- ")
-print("Final output below \n")
-print("Results list: \n")
-print(list)
-print("\nImages list: \n")
-print(list[0]) # lista de imagenes
-print("\nImage id: \n")
-print(list[0][0]) # id de imagen
-print("\nPaths on image: \n")
-print(list[0][1]) # paths en la  imagen
-print("\nPath detail: \n")
-print(list[0][1][0]) # camino
-print("\nPaths center: \n")
-print(list[0][1][0][1]) # coordenadas del camino
-
-
-print(" ------------- ")
+## 
+# a = PathFinder(weightsPath, imagesFolder, outputFolder)
+# list = a.detectPathsInFolder()
+# print(" ------------- ")
+# print("Final output below \n")
+# print("Results list: \n")
+# print(list)
+# print("\nImages list: \n")
+# print(list[0]) # lista de imagenes
+# print("\nImage id: \n")
+# print(list[0][0]) # id de imagen
+# print("\nPaths on image: \n")
+# print(list[0][1]) # paths en la  imagen
+# print("\nPath detail: \n")
+# print(list[0][1][0]) # camino
+# print("\nPaths center: \n")
+# print(list[0][1][0][1]) # coordenadas del camino
+# print(" ------------- ")

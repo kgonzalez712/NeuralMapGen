@@ -62,8 +62,8 @@ class PathFinder:
     def detectPathsInFolder(self):
       #Detects paths on images within a folder and saves modified images with bounding boxes.
       imageList = []
-      imageId = 0
-      pathId = 0
+      imageId = 1
+      pathId = 1
       for filename in os.listdir(self.imagesFolder):
           pathList = []
           if filename.endswith(".jpg") or filename.endswith(".png"):  # Check for image extensions
@@ -84,8 +84,8 @@ class PathFinder:
                   pathId += 1
               print(" ---- PATH LIST -----")
               print(pathList)
-              print(sorted(pathList,key=lambda x: x[1][0]))
-              imageList.append([imageId,sorted(pathList,key=lambda x: x[1][0])])
+              print(sorted(pathList,key=lambda x: x[2][0]))
+              imageList.append([imageId,sorted(pathList,key=lambda x: x[2][0])])
               # Save modified image
               output = f"{self.outputFolder}/modified_{os.path.basename(full_path)}"
               cv2.imwrite(output, img)
@@ -95,26 +95,26 @@ class PathFinder:
       return imageList
 
 
-# a = PathFinder(weightsPath, imagesFolder, outputFolder)
-# list = a.detectPathsInFolder()
-# print(" ------------- ")
-# print("Final output below \n")
-# print("Results list: \n")
-# print(list)
-# print("\nImages list: \n")
-# print(list[0]) # lista de imagenes
-# print("\nImage id: \n")
-# print(list[0][0]) # id de imagen
-# print("\nPaths on image: \n")
-# print(list[0][1]) # paths en la  imagen
-# print("\nPath detail: \n")
-# print(list[0][1][0]) # camino
-# print("\nPath id: \n")
-# print(list[0][1][0][0]) # coordenadas del camino
-# print("\nPath type: \n")
-# print(list[0][1][0][1]) # coordenadas del camino
-# print("\nPath center: \n")
-# print(list[0][1][0][2]) # coordenadas del camino
+a = PathFinder(weightsPath, imagesFolder, outputFolder)
+list = a.detectPathsInFolder()
+print(" ------------- ")
+print("Final output below \n")
+print("Results list: \n")
+print(list)
+print("\nImages list: \n")
+print(list[0]) # lista de imagenes
+print("\nImage id: \n")
+print(list[0][0]) # id de imagen
+print("\nPaths on image: \n")
+print(list[0][1]) # paths en la  imagen
+print("\nPath detail: \n")
+print(list[0][1][0]) # camino
+print("\nPath id: \n")
+print(list[0][1][0][0]) # coordenadas del camino
+print("\nPath type: \n")
+print(list[0][1][0][1]) # coordenadas del camino
+print("\nPath center: \n")
+print(list[0][1][0][2]) # coordenadas del camino
 
 
 # print(" ------------- ")

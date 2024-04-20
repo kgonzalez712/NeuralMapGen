@@ -1,3 +1,5 @@
+import sys
+sys.setrecursionlimit(10000)  # Increase to a larger value if needed
 class Graph:
   """
   This class represents a graph using an adjacency list.
@@ -134,10 +136,47 @@ class Graph:
       # Print the node with its neighbors and weights (if weighted)
       print(f"{node}: {', '.join(str(n) + (' (' + str(w) + ')' if w != 1 else '') for n, w in neighbors)}")
 
-  # You can add other methods like:
-  #  - print_graph() to visualize the graph
-  #  - shortest_path(source, destination) to find the shortest path
-  #  - breadth_first_search(source) for BFS traversal
+  def get_all_paths(self, source):
+    """
+    Returns a list containing all possible paths starting from the 
+    given source node and reaching any reachable node.
+
+    This function uses Depth-First Search (DFS) to explore the graph 
+    forward, keeping track of the current path. Backtracking is 
+    not allowed (i.e., visiting a node already in the current path).
+
+    Args:
+      source: The starting node for finding paths.
+
+    Returns:
+      A list containing all possible paths as lists of nodes.
+    """
+    if source not in self.adj_list:
+      return []
+
+    paths = []
+    visited = set()
+
+    def _dfs_paths(node, current_path):
+      visited.add(node)
+      current_path.append(node)
+      
+
+      # Check if a path has reached an end node (no neighbors)
+      if not self.adj_list[node]:
+        paths.append(current_path.copy())  # Append a copy to avoid modification
+
+      for neighbor, _ in self.adj_list[node]:
+        if neighbor not in visited:
+          _dfs_paths(neighbor, current_path)
+
+      # Backtracking is not allowed, so remove the current node before returning
+      current_path.pop()
+      visited.remove(node)
+
+    _dfs_paths(source, [])
+    return paths
+
 
 # Example usage
 # graph = Graph()
@@ -146,3 +185,18 @@ class Graph:
 # graph.print_graph()
 
 
+graph = Graph(directed=False)
+graph.add_edge("A", "B")
+graph.add_edge("A", "C")
+graph.add_edge("B", "D")
+graph.add_edge("C", "D")
+graph.add_edge("D", "E")
+
+source = "A"
+graph.print_graph()
+print(graph.adj_list)
+all_paths = graph.get_all_paths(source)
+
+print(f"All paths starting from '{source}':")
+for path in all_paths:
+  print(" -> ".join(path))

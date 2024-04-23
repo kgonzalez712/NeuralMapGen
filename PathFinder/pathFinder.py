@@ -1,7 +1,6 @@
 import os
-from ultralytics import YOLO, utils, models
+from ultralytics import YOLO
 import cv2
-import torch
 
 #Folder Paths
 weightsPath = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/bestTS4.pt"
@@ -16,7 +15,7 @@ classType = {
 }
 
 class PathFinder:
-    def __init__(self, weight, imagesPath, outputPath):
+    def __init__(self, weigthsPath, imagesPath, outputPath):
         """
         Initializes the PathDetector object.
 
@@ -26,9 +25,9 @@ class PathFinder:
             output_folder (str): Path to the folder for saving modified images.
             class_types (dict): Dictionary mapping class IDs to human-readable names.
         """
-        self.weightsPath = weight
-        self.imagesFolder = imagesFolder
-        self.outputFolder = outputFolder
+        self.weightsPath = weigthsPath
+        self.imagesFolder = imagesPath
+        self.outputFolder = outputPath
         self.model = YOLO(self.weightsPath)  # Load the model once for efficiency
 
     def getClassType(self,number):
@@ -94,27 +93,28 @@ class PathFinder:
               print(f"\n Image saved to: {output}")
       return imageList
 
+#test Code
 
-a = PathFinder(weightsPath, imagesFolder, outputFolder)
-list = a.detectPathsInFolder()
-print(" ------------- ")
-print("Final output below \n")
-print("Results list: \n")
-print(list)
-print("\nImages list: \n")
-print(list[0]) # lista de imagenes
-print("\nImage id: \n")
-print(list[0][0]) # id de imagen
-print("\nPaths on image: \n")
-print(list[0][1]) # paths en la  imagen
-print("\nPath detail: \n")
-print(list[0][1][0]) # camino
-print("\nPath id: \n")
-print(list[0][1][0][0]) # coordenadas del camino
-print("\nPath type: \n")
-print(list[0][1][0][1]) # coordenadas del camino
-print("\nPath center: \n")
-print(list[0][1][0][2]) # coordenadas del camino
-
-
+# a = PathFinder(weightsPath, imagesFolder, outputFolder)
+# list = a.detectPathsInFolder()
 # print(" ------------- ")
+# print("Final output below \n")
+# print("Results list: \n")
+# print(list)
+# print("\nImages list: \n")
+# print(list[0]) # lista de imagenes
+# print("\nImage id: \n")
+# print(list[0][0]) # id de imagen
+# print("\nPaths on image: \n")
+# print(list[0][1]) # paths en la  imagen
+# print("\nPath detail: \n")
+# print(list[0][1][0]) # camino
+# print("\nPath id: \n")
+# print(list[0][1][0][0]) # coordenadas del camino
+# print("\nPath type: \n")
+# print(list[0][1][0][1]) # coordenadas del camino
+# print("\nPath center: \n")
+# print(list[0][1][0][2]) # coordenadas del camino
+
+
+# # print(" ------------- ")

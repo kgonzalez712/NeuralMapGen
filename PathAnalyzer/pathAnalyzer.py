@@ -8,6 +8,12 @@ exampleList = [
     [6, []],
     [7, []]
     ]
+
+exampleList2 = [
+    [1, [[1, 'Open Path', [120, 329]], [2, 'Open Path', [368, 338]]]],
+    [2, []],
+    [3, []]
+    ]
 class PathAnalyzer:
     def __init__(self):
         self.openPathList = []
@@ -26,7 +32,6 @@ class PathAnalyzer:
                     pathList.append(([]))
             self.openPathList.append(pathList)
 
-
     def createRoomsGraph(self):
         rooms = self.openPathList
         pendingList = []
@@ -35,7 +40,7 @@ class PathAnalyzer:
         previous = 0
         weight = 1
         self.graph.add_node(0)
-        print("Room 0 Added")
+        print("Room added: 0")
         for room in rooms:
             
             print("Pending Nodes:",pendingList)
@@ -61,14 +66,11 @@ class PathAnalyzer:
                     else:
                         self.addToGraph(previous,counter,weight)
                     counter+=1
-
+                    
                     print("------PATH END--------")
             if(pendingFlag == False):
                 previous+=1
-
-
             print("----------------- \n")
-
                 
     def addToGraph(self,previous,current,weight):
         self.graph.add_node(current)
@@ -101,8 +103,7 @@ class PathAnalyzer:
                         connectedRooms.append(room)
             connectedWeight[weight] = connectedRooms
         return {key: [item for item in set(value)] for key, value in connectedWeight.items()}  # Set comprehension for unique values
-  
-  
+    
 class Graph:
   """
   This class represents a graph using an adjacency list.
@@ -281,18 +282,18 @@ class Graph:
     return paths                 
 #Test Code
 
-# a = PathAnalyzer()
-# list = a.removeClosedPaths(exampleList)
-# print(a.openPathList)
-# print("\n")
-# a.createRoomsGraph()
-# a.graph.print_graph()
-# print("--------------\n")
-# rooms = a.graph.adj_list
-# print("--------------\n")
-# print(rooms)
-# print("--------------\n")
-# print(a.getConnectedRoomsByWeight(rooms))
+a = PathAnalyzer()
+list = a.removeClosedPaths(exampleList2)
+print(a.openPathList)
+print("\n")
+a.createRoomsGraph()
+a.graph.print_graph()
+print("--------------\n")
+rooms = a.graph.adj_list
+print("--------------\n")
+print(rooms)
+print("--------------\n")
+print(a.getConnectedRoomsByWeight(rooms))
 
 
 

@@ -4,6 +4,25 @@ import PathAnalyzer.pathAnalyzer as PathAnalyzer
 from PathAnalyzer.Graph import *
 import PathFinder.pathFinder as PathFinder
 
+#Folder Paths
+weightsPath = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/bestTS4.pt"
+imagesFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/testImages"
+outputFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/outputTest"
+
+print("Starting Path Detection ...\n")
+pathFinder =  PathFinder.PathFinder(weightsPath,imagesFolder,outputFolder)
+roomsList = pathFinder.detectPathsInFolder()
+print("Rooms detected in images:\n")
+print(roomsList)
+print("\n")
+pathAnalyzer = PathAnalyzer.PathAnalyzer()
+pathAnalyzer.removeClosedPaths(roomsList)
+print(pathAnalyzer.openPathList)
+pathAnalyzer.createRoomsGraph()
+pathAnalyzer.graph.print_graph()
+roomsDict = pathAnalyzer.graph.adj_list
+data = pathAnalyzer.getConnectedRoomsByWeight(roomsDict)
+
 def create_rectangles(window, data):
     """
     Creates rectangles based on the provided dictionary and connects them with lines.
@@ -22,25 +41,22 @@ def create_rectangles(window, data):
     room_positions = {}  # Dictionary to store positions of previously drawn rectangles for each room
     window_width, window_height = window.get_size()
     num_rows = len(data)
-    max_rooms_per_group = max(len(rooms) for rooms in data.values()) if data else 0
-    rect_width = (window_width - (max_rooms_per_group - 1) * 10) // max_rooms_per_group
-    rect_height = window_height // len(data)
+    usable_width = 300 - 1.5 * margin
+    usable_height = 300 - 1.5 * margin
+
     font = pygame.font.SysFont(None, 20)  # Create a font object
     
     # Calculate usable area within the window after considering margins
-    usable_width = window_width - 2 * margin
-    usable_height = window_height - 2 * margin
+    rect_width = usable_width // num_rows
+    rect_height = usable_height // num_rows
 
     current_y = margin
     global total_drawable_height
     total_drawable_height = rect_height * num_rows  # Total height of all rectangles
     
     # Calculate usable area within the window after considering margins
-    usable_width = 500 - 1.5 * margin
-    usable_height = 500 - 1.5 * margin
+
     
-    rect_width = (usable_width - (max_rooms_per_group - 1) * 10) // max_rooms_per_group
-    rect_height = usable_height // num_rows
 
     current_y = margin
     for row_num, (room_num, connected_rooms) in enumerate(data.items()):
@@ -111,11 +127,6 @@ def save_window_image(window, filename="Map.png"):
 # Initialize Pygame
 pygame.init()
 
-#Folder Paths
-weightsPath = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/bestTS4.pt"
-imagesFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/testImages"
-outputFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/outputTest"
-
 # Set window size
 window_width = 1000
 window_height = 1000
@@ -126,20 +137,10 @@ pygame.display.set_caption("Rectangles from Dictionary with Connections")
 
 # Sample data
 data = {
-    1: [0, 1, 2],
-    2: [1, 3, 4, 5],
-    3: [4, 6]
+    1: [0, 1, 2, 3],
+    2: [ 3, 4, 5],
+    3: [5, 6]
 }
-
-pathFinder =  PathFinder.PathFinder(weightsPath,imagesFolder,outputFolder)
-roomsList = pathFinder.detectPathsInFolder()
-pathAnalyzer = PathAnalyzer.PathAnalyzer()
-pathAnalyzer.removeClosedPaths(roomsList)
-pathAnalyzer.createRoomsGraph()
-roomsDict = pathAnalyzer.graph.adj_list
-#data = pathAnalyzer.getConnectedRoomsByWeight(roomsDict)
-
-
 
 # Create rectangles and connections
 create_rectangles(window, data)

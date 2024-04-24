@@ -2,10 +2,6 @@ import os
 from ultralytics import YOLO
 import cv2
 
-#Folder Paths
-weightsPath = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/bestTS4.pt"
-imagesFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/testImages"
-outputFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/outputTest"
 
 #Class Types
 classType = {
@@ -63,10 +59,13 @@ class PathFinder:
       imageList = []
       imageId = 1
       pathId = 1
-      for filename in os.listdir(self.imagesFolder):
+      pictures = sorted(os.listdir(self.imagesFolder))
+      print(pictures)
+      for filename in pictures:
           pathList = []
-          if filename.endswith(".jpg") or filename.endswith(".png"):  # Check for image extensions
+          if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".PNG")  or filename.endswith(".JPG"):  # Check for image extensions
               full_path = os.path.join(self.imagesFolder, filename)
+              print("Analizing image " + filename)
               results = self.model.predict(full_path)  # Predict on each image
               result = results[0]
               img = cv2.imread(full_path)
@@ -81,16 +80,13 @@ class PathFinder:
                   cv2.rectangle(img, (x1, y1), (x2, y2), (0, 230, 0), 2)
                   cv2.putText(img, label, (x1, y2 + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 230, 0), 2)
                   pathId += 1
-              print(" ---- PATH LIST -----")
-              print(pathList)
-              print(sorted(pathList,key=lambda x: x[2][0]))
               imageList.append([imageId,sorted(pathList,key=lambda x: x[2][0])])
               # Save modified image
               output = f"{self.outputFolder}/modified_{os.path.basename(full_path)}"
               cv2.imwrite(output, img)
               imageId += 1
 
-              print(f"\n Image saved to: {output}")
+              #print(f"\n Image saved to: {output}")
       return imageList
 
 #test Code

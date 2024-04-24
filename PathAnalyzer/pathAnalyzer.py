@@ -26,7 +26,7 @@ class PathAnalyzer:
             for path in room[1]:
                 if(path[1] == 'Open Path'):
                     pathList.append((path[0],path[2]))
-                elif(path[1] == 'Closed Path'):
+                elif(path[1] == 'Closed Path' or path == []):
                     pass
                 else:
                     pathList.append(([]))
@@ -297,3 +297,5 @@ print(a.getConnectedRoomsByWeight(rooms))
 
 
 
+[[1, 'Open Path', [120, 329]], [2, 'Open Path', [368, 338]]]
+[(1, 'Open Path', [2817, 2186], '67.0%'), []]

@@ -56,43 +56,63 @@ class PathFinder:
     
     def detectPathsInFolder(self):
       #Detects paths on images within a folder and saves modified images with bounding boxes.
-      imageList = []
-      imageId = 1
+      imageList = [[1]]
+      imageId = currentId = 1
       pathId = 1
       pictures = sorted(os.listdir(self.imagesFolder))
+      pathList = []
       print(pictures)
       for filename in pictures:
-          pathList = []
           if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".PNG")  or filename.endswith(".JPG"):  # Check for image extensions
               full_path = os.path.join(self.imagesFolder, filename)
               print("Analizing image " + filename)
               results = self.model.predict(full_path)  # Predict on each image
               result = results[0]
               img = cv2.imread(full_path)
-              for box in result.boxes:
-                  classId = self.getClassType(result.names[box.cls[0].item()])
-                  cords = box.xyxy[0].tolist()
-                  cords = [round(x) for x in cords]
-                  conf = self.decimalToPercent(float(round(box.conf[0].item(), 2)))
-                  pathList.append(list((pathId,classId,self.calculateCenter(cords),conf)))
-                  x1, y1, x2, y2 = [int(x) for x in box.xyxy[0].tolist()]
-                  label = f"{classId} PathId:{pathId}"
-                  cv2.rectangle(img, (x1, y1), (x2, y2), (0, 230, 0), 2)
-                  cv2.putText(img, label, (x1, y2 + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 230, 0), 2)
-                  pathId += 1
-              imageList.append([imageId,sorted(pathList,key=lambda x: x[2][0])])
-              # Save modified image
+                        # Check if the filename starts with the current image ID
+              print(str(imageId))
+              if filename.startswith(str(imageId)):
+                  print("aqi")
+                  imageId = currentId
+              else:
+                  pathList = []
+                  imageId += 1
+                  imageList.append([imageId])
+              if(len(result.boxes) > 0):
+                for box in result.boxes:
+                    print("boxy box")
+                    classId = self.getClassType(result.names[box.cls[0].item()])
+                    cords = box.xyxy[0].tolist()
+                    cords = [round(x) for x in cords]
+                    conf = self.decimalToPercent(float(round(box.conf[0].item(), 2)))
+                    pathList.append(list((pathId,classId,self.calculateCenter(cords),conf)))
+                    x1, y1, x2, y2 = [int(x) for x in box.xyxy[0].tolist()]
+                    label = f"{classId} PathId:{pathId}"
+                    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 230, 0), 2)
+                    cv2.putText(img, label, (x1, y2 + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 230, 0), 2)
+                    pathId += 1
+                    imageList[imageId-1].append(sorted(pathList,key=lambda x: x[2][0]))
+              elif(len(pathList)!=0):
+                pass
+              else:
+                imageList[imageId-1].append([])
+              #Save modified image
               output = f"{self.outputFolder}/modified_{os.path.basename(full_path)}"
               cv2.imwrite(output, img)
-              imageId += 1
+
 
               #print(f"\n Image saved to: {output}")
-      return imageList
+      #return imageList
+      print(imageList)
+
 
 #test Code
-
-# a = PathFinder(weightsPath, imagesFolder, outputFolder)
-# list = a.detectPathsInFolder()
+#Folder Paths
+weightsPath = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/bestTS4.pt"
+imagesFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/testImages"
+outputFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/outputTest"
+a = PathFinder(weightsPath, imagesFolder, outputFolder)
+list = a.detectPathsInFolder()
 # print(" ------------- ")
 # print("Final output below \n")
 # print("Results list: \n")

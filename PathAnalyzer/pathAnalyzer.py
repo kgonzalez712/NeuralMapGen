@@ -9,11 +9,7 @@ exampleList = [
     [7, []]
     ]
 
-exampleList2 = [
-    [1, [[1, 'Open Path', [120, 329]], [2, 'Open Path', [368, 338]]]],
-    [2, []],
-    [3, []]
-    ]
+exampleList2 = [[1, [[1, 'Open Path', [2817, 2186], '67.0%']]], [2, []]]
 class PathAnalyzer:
     def __init__(self):
         self.openPathList = []
@@ -282,20 +278,15 @@ class Graph:
     return paths                 
 #Test Code
 
-a = PathAnalyzer()
-list = a.removeClosedPaths(exampleList2)
-print(a.openPathList)
-print("\n")
-a.createRoomsGraph()
-a.graph.print_graph()
-print("--------------\n")
-rooms = a.graph.adj_list
-print("--------------\n")
-print(rooms)
-print("--------------\n")
-print(a.getConnectedRoomsByWeight(rooms))
-
-
-
-[[1, 'Open Path', [120, 329]], [2, 'Open Path', [368, 338]]]
-[(1, 'Open Path', [2817, 2186], '67.0%'), []]
+# a = PathAnalyzer()
+# list = a.removeClosedPaths(exampleList2)
+# print(a.openPathList)
+# print("\n")
+# a.createRoomsGraph()
+# a.graph.print_graph()
+# print("--------------\n")
+# rooms = a.graph.adj_list
+# print("--------------\n")
+# print(rooms)
+# print("--------------\n")
+# print(a.getConnectedRoomsByWeight(rooms))

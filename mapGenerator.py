@@ -135,12 +135,6 @@ window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 # Set window title
 pygame.display.set_caption("Rectangles from Dictionary with Connections")
 
-# Sample data
-data = {
-    1: [0, 1, 2, 3],
-    2: [ 3, 4, 5],
-    3: [5, 6]
-}
 
 # Create rectangles and connections
 create_rectangles(window, data)

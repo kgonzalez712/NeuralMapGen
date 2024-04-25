@@ -54,71 +54,97 @@ class PathFinder:
       y_center = (y1 + y2) / 2
       return [round(x_center), round(y_center)]
     
+    def processImages(self, resultObj, paths, pathId,imgFullPath):
+      for box in resultObj.boxes:
+        classId = self.getClassType(resultObj.names[box.cls[0].item()])
+        cords = box.xyxy[0].tolist()
+        cords = [round(x) for x in cords]
+        conf = self.decimalToPercent(float(round(box.conf[0].item(), 2)))
+        paths.append(list((pathId,classId,self.calculateCenter(cords),conf)))
+        x1, y1, x2, y2 = [int(x) for x in box.xyxy[0].tolist()]
+        label = f"{classId} PathId:{pathId}"
+        cv2.rectangle(imgFullPath, (x1, y1), (x2, y2), (0, 230, 0), 2)
+        cv2.putText(imgFullPath, label, (x1, y2 + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 230, 0), 2)
+        sorted(paths,key=lambda x: x[2][0])
+      return paths
+
+
+    
     def detectPathsInFolder(self):
       #Detects paths on images within a folder and saves modified images with bounding boxes.
       imageList = [[1]]
-      imageId = currentId = 1
+      imageId = 1
       pathId = 1
       pictures = sorted(os.listdir(self.imagesFolder))
       pathList = []
-      print(pictures)
-      for filename in pictures:
+      for i, filename in enumerate(pictures):
+          isLast = i == len(pictures) - 1
+          matchesId = imageId == int(filename[:2])
           if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".PNG")  or filename.endswith(".JPG"):  # Check for image extensions
               full_path = os.path.join(self.imagesFolder, filename)
-              print("Analizing image " + filename)
               results = self.model.predict(full_path)  # Predict on each image
               result = results[0]
+              lastElement = result
               img = cv2.imread(full_path)
-                        # Check if the filename starts with the current image ID
-              print(str(imageId))
-              if filename.startswith(str(imageId)):
-                  print("aqi")
-                  imageId = currentId
+              print("-----Flags----")
+              print(matchesId)
+              print(len(result.boxes)>0)
+              print(isLast)
+              print("-----Id----")
+              print(imageId)
+              if(matchesId):
+                print("M si")
+                if(len(result.boxes)>0):
+                  print("R si")
+                  if(isLast):
+                    break
+                  else:
+                    print("L no")
+                    pathList = self.processImages(result,pathList,pathId,img)
+                    print(pathList)
+                    pathId+=1    
+                else:
+                  print("R no")
+                  if(isLast):
+                    print("L2 si")
+                    break
+                  else:
+                    print("L2 no")
+                    pass  
               else:
-                  pathList = []
-                  imageId += 1
-                  imageList.append([imageId])
-              if(len(result.boxes) > 0):
-                for box in result.boxes:
-                    print("boxy box")
-                    classId = self.getClassType(result.names[box.cls[0].item()])
-                    cords = box.xyxy[0].tolist()
-                    cords = [round(x) for x in cords]
-                    conf = self.decimalToPercent(float(round(box.conf[0].item(), 2)))
-                    pathList.append(list((pathId,classId,self.calculateCenter(cords),conf)))
-                    x1, y1, x2, y2 = [int(x) for x in box.xyxy[0].tolist()]
-                    label = f"{classId} PathId:{pathId}"
-                    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 230, 0), 2)
-                    cv2.putText(img, label, (x1, y2 + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 230, 0), 2)
-                    pathId += 1
-                    imageList[imageId-1].append(sorted(pathList,key=lambda x: x[2][0]))
-              elif(len(pathList)!=0):
-                pass
-              else:
-                imageList[imageId-1].append([])
-              #Save modified image
-              output = f"{self.outputFolder}/modified_{os.path.basename(full_path)}"
-              cv2.imwrite(output, img)
+                print("M no")
+                pathList = self.processImages(result,pathList,pathId,img)
+                imageList[imageId-1].append(sorted(pathList,key=lambda x: x[2][0]))
+                pathList = []
+                imageId+=1
+                imageList.append([imageId])
+      if lastElement is not None:
+        if(len(lastElement.boxes)>0):
+          pathList = self.processImages(result,pathList,pathId,img)
+          imageList[imageId-1].append(sorted(pathList,key=lambda x: x[2][0]))
+        else:
+          imageList[imageId-1].append(sorted(pathList,key=lambda x: x[2][0]))
 
+      return imageList      
 
-              #print(f"\n Image saved to: {output}")
-      #return imageList
-      print(imageList)
+                
+              
+
 
 
 #test Code
 #Folder Paths
-weightsPath = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/bestTS4.pt"
-imagesFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/testImages"
-outputFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/outputTest"
-a = PathFinder(weightsPath, imagesFolder, outputFolder)
-list = a.detectPathsInFolder()
+# weightsPath = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/bestTS4.pt"
+# imagesFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/testImages"
+# outputFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/outputTest"
+# a = PathFinder(weightsPath, imagesFolder, outputFolder)
+# list = a.detectPathsInFolder()
 # print(" ------------- ")
 # print("Final output below \n")
 # print("Results list: \n")
 # print(list)
 # print("\nImages list: \n")
-# print(list[0]) # lista de imagenes
+# # print(list[0]) # lista de imagenes
 # print("\nImage id: \n")
 # print(list[0][0]) # id de imagen
 # print("\nPaths on image: \n")
@@ -131,6 +157,3 @@ list = a.detectPathsInFolder()
 # print(list[0][1][0][1]) # coordenadas del camino
 # print("\nPath center: \n")
 # print(list[0][1][0][2]) # coordenadas del camino
-
-
-# # print(" ------------- ")

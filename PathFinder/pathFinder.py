@@ -1,8 +1,6 @@
 import os
 from ultralytics import YOLO
 import cv2
-
-
 #Class Types
 classType = {
   '0': "Closed Path",
@@ -86,33 +84,17 @@ class PathFinder:
               result = results[0]
               lastElement = result
               img = cv2.imread(full_path)
-              print("-----Flags----")
-              print(matchesId)
-              print(len(result.boxes)>0)
-              print(isLast)
-              print("-----Id----")
-              print(imageId)
               if(matchesId):
-                print("M si")
                 if(len(result.boxes)>0):
-                  print("R si")
                   if(isLast):
                     break
                   else:
-                    print("L no")
                     pathList = self.processImages(result,pathList,pathId,img)
                     print(pathList)
                     pathId+=1    
                 else:
-                  print("R no")
-                  if(isLast):
-                    print("L2 si")
-                    break
-                  else:
-                    print("L2 no")
                     pass  
               else:
-                print("M no")
                 pathList = self.processImages(result,pathList,pathId,img)
                 imageList[imageId-1].append(sorted(pathList,key=lambda x: x[2][0]))
                 pathList = []

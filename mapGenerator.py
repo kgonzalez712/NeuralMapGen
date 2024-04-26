@@ -1,7 +1,6 @@
 import pygame
 import pygame.font
 import PathAnalyzer.pathAnalyzer as PathAnalyzer
-from PathAnalyzer.Graph import *
 import PathFinder.pathFinder as PathFinder
 
 #Folder Paths
@@ -22,6 +21,12 @@ pathAnalyzer.createRoomsGraph()
 pathAnalyzer.graph.print_graph()
 roomsDict = pathAnalyzer.graph.adj_list
 data = pathAnalyzer.getConnectedRoomsByWeight(roomsDict)
+
+data = {
+    1: [0,1,2,3],
+    2: [1,4,5],
+    3: [5,6]
+}
 
 def create_rectangles(window, data):
     """

@@ -1,1 +1,1 @@
-# UrbanMapGen
+# NeuralMapGen

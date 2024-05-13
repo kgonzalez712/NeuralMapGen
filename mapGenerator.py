@@ -6,29 +6,29 @@ import logger
 import sys
 
 
-#TEST DATA
-exampleRoomsList1 = [
-  [1, []]
-  ]
+# #TEST DATA
+# exampleRoomsList1 = [
+#   [1, []]
+#   ]
 
-exampleRoomsList2 = [
-  [1, [[1, 'Open Path', [274, 308], '88.0%']]],
-  [2, []]
-]
+# exampleRoomsList2 = [
+#   [1, [[1, 'Open Path', [274, 308], '88.0%']]],
+#   [2, []]
+# ]
 
-exampleRoomsList3 = [
-  [1, [[1, 'Open Path', [274, 308], '87.0%']]],
-  [2, [[2, 'Open Path', [120, 329], '68.0%'], [3, 'Open Path', [368, 338], '89.0%']]],
-  [3, []],
-  [4, [[4, 'Open Path', [274, 308], '58.0%']]],
-  [5, [[5, 'Open Path', [120, 329], '78.0%'], [6, 'Open Path', [368, 338], '88.0%']]],
-  [6, []],
-  [7, []]
-]
+# exampleRoomsList3 = [
+#   [1, [[1, 'Open Path', [274, 308], '87.0%']]],
+#   [2, [[2, 'Open Path', [120, 329], '68.0%'], [3, 'Open Path', [368, 338], '89.0%']]],
+#   [3, []],
+#   [4, [[4, 'Open Path', [274, 308], '58.0%']]],
+#   [5, [[5, 'Open Path', [120, 329], '78.0%'], [6, 'Open Path', [368, 338], '88.0%']]],
+#   [6, []],
+#   [7, []]
+# ]
 
 
 #Folder Paths
-weightsPath = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/bestTS4.pt"
+weightsPath = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/bestTS3.pt"
 imagesFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/testImages"
 outputFolder = "/Users/kgonzale/Documents/Resources/TEC/TFG/UrbanMapGen/PathFinder/outputTest"
 
@@ -44,9 +44,9 @@ roomsList = pathFinder.detectPathsInFolder()
 pathAnalyzer = PathAnalyzer.PathAnalyzer(log)
 print("\n")
 print("Lista de rutas: \n")
-print(exampleRoomsList2)
+print(roomsList)
 print("\n")
-pathAnalyzer.removeClosedPaths(exampleRoomsList2)
+pathAnalyzer.removeClosedPaths(roomsList)
 print("Lista de rutas filtrada: \n")
 print(str(pathAnalyzer.openPathList))
 print("\n")

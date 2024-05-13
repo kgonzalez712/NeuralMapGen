@@ -1,3 +1,4 @@
+import os
 from logger import NMGLogger
 
 
@@ -184,11 +185,28 @@ class Graph:
       return self.adjList[node]
     return []
 
-  def printGraph(self):
-    #Prints the graph in a human-readable format.
+  def printGraph(self, filename="graph.txt"):
+    """
+    Prints the graph in a human-readable format and saves it to a txt file.
+
+    Args:
+        filename (str, optional): The filename to save the graph. Defaults to "graph.txt".
+    """
+    # Create Outputs/Graph directory if it doesn't exist
+    output_dir = "Outputs/Graph"
+    os.makedirs(output_dir, exist_ok=True)  # exist_ok prevents errors if folder exists
+
+    # Build the string representation of the graph
+    graph_string = ""
     for node, neighbors in self.adjList.items():
-      # Print the node with its neighbors and weights (if weighted)
-      print(f"{node}: {', '.join(str(n) + (' (' + str(w) + ')' if w != 1 else '') for n, w in neighbors)}")
+        graph_string += f"{node}: {', '.join(str(n) + (' (' + str(w) + ')' if w != 1 else '') for n, w in neighbors)}\n"
+
+    # Save the string to a txt file
+    with open(os.path.join(output_dir, filename), "w") as f:
+        f.write(graph_string)
+
+    # Print the graph to console for optional viewing
+    print(graph_string)
 
  
 #Test Code

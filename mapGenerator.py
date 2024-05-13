@@ -6,6 +6,25 @@ import logger
 import sys
 
 
+#TEST DATA
+exampleRoomsList1 = [
+  [1, []]
+  ]
+
+exampleRoomsList2 = [
+  [1, [[1, 'Open Path', [274, 308], '88.0%']]],
+  [2, []]
+]
+
+exampleRoomsList3 = [
+  [1, [[1, 'Open Path', [274, 308], '87.0%']]],
+  [2, [[2, 'Open Path', [120, 329], '68.0%'], [3, 'Open Path', [368, 338], '89.0%']]],
+  [3, []],
+  [4, [[4, 'Open Path', [274, 308], '58.0%']]],
+  [5, [[5, 'Open Path', [120, 329], '78.0%'], [6, 'Open Path', [368, 338], '88.0%']]],
+  [6, []],
+  [7, []]
+]
 
 
 #Folder Paths
@@ -25,9 +44,9 @@ roomsList = pathFinder.detectPathsInFolder()
 pathAnalyzer = PathAnalyzer.PathAnalyzer(log)
 print("\n")
 print("Lista de rutas: \n")
-print(roomsList)
+print(exampleRoomsList2)
 print("\n")
-pathAnalyzer.removeClosedPaths(roomsList)
+pathAnalyzer.removeClosedPaths(exampleRoomsList2)
 print("Lista de rutas filtrada: \n")
 print(str(pathAnalyzer.openPathList))
 print("\n")
@@ -75,7 +94,9 @@ def create_rectangles(window, data):
     margin = 30
     room_positions = {}  # Dictionary to store positions of previously drawn rectangles for each room
     window_width, window_height = window.get_size()
-    num_rows = len(data)
+    if (len(data)) != 0: 
+        num_rows = len(data) 
+    else: num_rows =1
     usable_width = 300 - 1.5 * margin
     usable_height = 300 - 1.5 * margin
 
@@ -201,23 +222,3 @@ while running:
 pygame.quit()
 
 
-
-#TEST DATA
-# exampleRoomsList1 = [
-#   [1, []]
-#   ]
-
-# exampleRoomsList2 = [
-#   [1, [[1, 'Open Path', [274, 308], '88.0%']]],
-#   [2, []]
-# ]
-
-# exampleRoomsList3 = [
-#   [1, [[1, 'Open Path', [274, 308], '87.0%']]],
-#   [2, [[2, 'Open Path', [120, 329], '68.0%'], [3, 'Open Path', [368, 338], '89.0%']]],
-#   [3, []],
-#   [4, [[4, 'Open Path', [274, 308], '58.0%']]],
-#   [5, [[5, 'Open Path', [120, 329], '78.0%'], [6, 'Open Path', [368, 338], '88.0%']]],
-#   [6, []],
-#   [7, []]
-# ]

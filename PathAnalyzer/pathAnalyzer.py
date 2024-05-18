@@ -9,9 +9,10 @@ class PathAnalyzer:
         self.logger = logger
 
     def removeClosedPaths(self,pathList):
+        self.logger("---------- Started PathAnalyzer subrutine: removeClosedPaths ------")
         rooms = pathList
-
-        # print("Entering remove close paths")
+        self.logger("Filtering close paths and dead ends...")
+        print("Filtering close paths and dead ends...")
         for room in rooms:
           if (len(rooms)==1):
             self.openPathList.append([])
@@ -35,6 +36,7 @@ class PathAnalyzer:
 
 
     def createRoomsGraph(self):
+        self.logger("---------- Started PathAnalyzer subrutine: createRoomsGraph ------")
         rooms = self.openPathList
         pendingList = []
         pendingFlag = False
@@ -42,9 +44,10 @@ class PathAnalyzer:
         previous = 1
         weight = 1
         self.graph.addNode(1)
-        print("Room added: 0")
+        self.logger("Initial room addeed")
+        print("Initial room addeed")
         for room in rooms:
-            
+            self.logger("Started processing a new room...")
             print("Pending Nodes:",pendingList)
             print("Current room in list:", room)
             if (room == []):
@@ -54,6 +57,7 @@ class PathAnalyzer:
             for i in range(len(room)):
                 if (pendingFlag == True):
                     weight += 1
+                    self.logger("Working pending nodes logic")
                     print("Working pending nodes logic")
                     previous = pendingList.pop(0)
                     self.addToGraph(previous,counter, weight)
@@ -75,20 +79,18 @@ class PathAnalyzer:
             print("----------------- \n")
                 
     def addToGraph(self,previous,current,weight):
+        self.logger("---------- Started PathAnalyzer subrutine: addToGraph ------")
         self.graph.addNode(current)
         self.graph.addEdge(previous,current,weight)
+        self.logger("Room added: "+ str(current))
         print("Room added:",current)
+        self.logger("Conected to: " + str(previous))
         print("Conected to:",previous)
 
     def getConnectedRoomsByWeight(self,rooms):
         """
         Analyzes a dictionary representing room connections and returns a dictionary 
         where keys are weights and values are lists of connected rooms at that weight.
-
-        Args:
-            rooms: A dictionary where keys are rooms and values are lists of 
-                tuples (neighboring_room, weight).
-
         Returns:
             A dictionary with weights as keys and lists of connected rooms as values.
         """
@@ -100,7 +102,7 @@ class PathAnalyzer:
         for weight in uniqueWeights:
             connectedRooms = []
             for room, connections in rooms.items():
-                for neighbor, edge_weight in connections:
+                for edge_weight in connections:
                     if edge_weight == weight:
                         connectedRooms.append(room)
             connectedWeight[weight] = connectedRooms
